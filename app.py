@@ -13,11 +13,8 @@ def fontRegistered():
         fm.fontManager.addfont(font_file)
     fm._load_fontmanager(try_read_cache=False)
 
-plt.rcParams['axes.unicode_minus'] = False
-if platform.system() == 'Linux':
-    rc('font', family='NanumGothic')
-
 def set_font():
+    plt.rcParams['axes.unicode_minus'] = False
     system_os = platform.system()
     
     if system_os == "Darwin":  # macOS
@@ -25,7 +22,7 @@ def set_font():
     elif system_os == "Windows":  # Windows
         font_path = "C:/Windows/Fonts/malgun.ttf"
     else:  # Linux
-        font_path = "/usr/share/fonts/truetype/nanum/NanumGothic.ttf"
+        rc('font', family='NanumGothic')
     
     if os.path.exists(font_path):
         font_name = fm.FontProperties(fname=font_path).get_name()
