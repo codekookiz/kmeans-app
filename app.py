@@ -3,7 +3,7 @@ from pandas.api.types import is_integer_dtype, is_float_dtype, is_object_dtype
 from sklearn.preprocessing import OneHotEncoder, LabelEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.cluster import KMeans
-from matplotlib import font_manager, rc
+from matplotlib import rc
 
 @st.cache_data
 def fontRegistered():
