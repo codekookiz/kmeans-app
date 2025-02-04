@@ -30,12 +30,16 @@ def main() :
     st.title('K-Means 클러스터링 앱')
     st.subheader('')
 
+    st.info('사용자가 업로드한 CSV 파일을 분석하여, 클러스터링(그룹화)을 진행합니다.')
+    st.text('')
+
     # 1. csv 파일 업로드
     file = st.file_uploader('CSV 파일 업로드', type=['csv'])
     if file is not None :
         # 2. 데이터 불러오기
         df = pd.read_csv(file)
         st.dataframe(df.head())
+        st.text('')
         st.info('NaN 데이터가 존재할 경우 해당 행을 삭제합니다.')
         st.dataframe(df.isna().sum())
         df.dropna(inplace=True)
@@ -132,7 +136,9 @@ def main() :
             else : 
                 k = max_k
 
-        st.text(f'최적의 클러스터(그룹) 개수는 {k}개입니다.')
+        st.subheader(f'최적의 클러스터(그룹) 개수는 {k}개입니다.')
+        st.text('')
+        
         kmeans = KMeans(n_clusters=k, random_state=4)
         df['Group'] = kmeans.fit_predict(df_new)
 
