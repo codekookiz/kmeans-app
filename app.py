@@ -33,12 +33,11 @@ def set_font():
     else:
         st.warning("폰트를 찾을 수 없습니다. 기본 폰트를 사용합니다.")
 
-set_font()
-
 
 def main() :
     fontRegistered()
     plt.rc('font', family='NanumGothic')
+    set_font()
 
     st.title('K-Means 클러스터링 앱')
     st.subheader('')
