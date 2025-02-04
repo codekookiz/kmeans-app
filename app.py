@@ -111,7 +111,7 @@ def main():
         st.subheader('🎨 클러스터 시각화')
         fig2 = plt.figure()
         palette = sns.color_palette("tab10", k)
-        sns.scatterplot(x=df_new.iloc[:, 0], y=df_new.iloc[:, 1], hue=df['Group'], palette=palette, legend='full')
+        sb.scatterplot(x=df_new.iloc[:, 0], y=df_new.iloc[:, 1], hue=df['Group'], palette=palette, legend='full')
         plt.xlabel(selected_columns[0])
         plt.ylabel(selected_columns[1] if len(selected_columns) > 1 else 'Feature 2')
         plt.title('클러스터링 결과')
