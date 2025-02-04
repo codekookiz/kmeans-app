@@ -100,6 +100,8 @@ def main() :
         k = st.number_input('숫자 입력', min_value=2, max_value=max_k)
         st.subheader('')
 
+        
+
         kmeans = KMeans(n_clusters=k, random_state=4)
         df['Group'] = kmeans.fit_predict(df_new)
 
