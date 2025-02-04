@@ -54,7 +54,6 @@ def main() :
             elif is_float_dtype(df[col]) :
                 df_new[col] = df[col]
             elif is_object_dtype(df[col]) :
-                print(f'이 컬럼의 유니크 개수 : {df[col].nunique()}') # >>==>> 임시 코드, 삭제 필요
                 if df[col].nunique() >= 3 :
                     # 원핫 인코딩
                     ct = ColumnTransformer([('onehot', OneHotEncoder(), [0])], remainder='passthrough')
@@ -78,9 +77,9 @@ def main() :
         # 데이터 개수가 클러스터링 개수 이상이어야하므로, 데이터 개수로 K값의 최댓값을 결정
         st.info(f'데이터의 개수는 {df_new.shape[0]}입니다.')
         if df_new.shape[0] < 10 :
-            max_k = st.slider('K값 선택 (최대 그룹 개수)', min_value=2, max_value=df_new.shape[0])
+            max_k = df_new.shape[0]
         else :
-            max_k = st.slider('K값 선택 (최대 그룹 개수)', min_value=2, max_value=10)
+            max_k = 10
         st.text('')
 
         
@@ -92,18 +91,48 @@ def main() :
         fig1 = plt.figure()
         plt.plot(range(1, max_k + 1), wcss)
         plt.title('엘보우 메소드')
-        plt.xlabel('클러스터 개수')
+        plt.xlabel('클러스터(그룹) 개수')
         plt.ylabel('WCSS')
         st.pyplot(fig1)
         st.subheader('')
 
-        st.info('원하는 클러스터 개수를 입력하세요.')
-        k = st.number_input('숫자 입력', min_value=2, max_value=max_k)
-        st.subheader('')
+        #st.info('원하는 클러스터 개수를 입력하세요.')
+        #k = st.number_input('숫자 입력', min_value=2, max_value=max_k)
+        #st.subheader('')
 
-        
-        
+        if max_k == 3 :
+            if (wcss[0] - wcss[1]) / (wcss[1] - wcss[2]) >= 2 :
+                k = 2
+            else :
+                if wcss[0] / min(wcss) >= 2 :
+                    k = 3
+                else :
+                    k = 1
+        elif max_k == 2 :
+            if (wcss[0] - wcss[1]) / wcss[1] >= 1 :
+                k = 2
+            else :
+                k = 1
+        else : 
+            best = []
+            cnt = 0
+            for a in range(2, max_k - 1) :
+                if wcss[a - 1] - wcss[a + 1] != 0 :
+                    new_delta = (wcss[a - 2] - wcss[a]) / (wcss[a - 1] - wcss[a + 1])
+                    if new_delta >= 2 :
+                        best.append(a)
+                else :
+                    if cnt == 0 :
+                        best.append(a)
+                        cnt += 1
+                    else :
+                        continue
+            if len(best) != 0 :
+                k = max(best)
+            else : 
+                k = max_k
 
+        st.text(f'최적의 클러스터(그룹) 개수는 {k}입니다.')
         kmeans = KMeans(n_clusters=k, random_state=4)
         df['Group'] = kmeans.fit_predict(df_new)
 
