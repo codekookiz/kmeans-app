@@ -1,11 +1,31 @@
-import streamlit as st, pandas as pd, matplotlib.pyplot as plt
+import streamlit as st, pandas as pd, matplotlib.pyplot as plt, matplotlib.font_manager as fm, platform, os
 from pandas.api.types import is_integer_dtype, is_float_dtype, is_object_dtype
 from sklearn.preprocessing import OneHotEncoder, LabelEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.cluster import KMeans
+from matplotlib import font_manager, rc
+
+@st.cache_data
+def fontRegistered():
+    font_dirs = [os.getcwd() + '/custom_fonts']
+    font_files = fm.findSystemFonts(fontpaths=font_dirs)
+    for font_file in font_files:
+        fm.fontManager.addfont(font_file)
+    fm._load_fontmanager(try_read_cache=False)
+
+plt.rcParams['axes.unicode_minus'] = False
+if platform.system() == 'Linux':
+    rc('font', family='NanumGothic')
+
+font_path = "/System/Library/Fonts/Supplemental/AppleGothic.ttf"
+font_name = fm.FontProperties(fname = font_path).get_name()
+plt.rc('font', family = font_name)
 
 
 def main() :
+    fontRegistered()
+    plt.rc('font', family='NanumGothic')
+
     st.title('K-Means 클러스터링 앱')
     st.subheader('')
 
@@ -70,23 +90,16 @@ def main() :
             print(wcss.append(kmeans.inertia_))
         fig1 = plt.figure()
         plt.plot(range(1, max_k + 1), wcss)
+        plt.title('엘보우 메소드')
+        plt.xlabel('클러스터 개수')
+        plt.ylabel('WCSS')
         st.pyplot(fig1)
         st.subheader('')
 
-        # st.info('원하는 클러스터 개수를 입력하세요.')
-        # k = st.number_input('숫자 입력', min_value=2, max_value=max_k)
-        # st.subheader('')
+        st.info('원하는 클러스터 개수를 입력하세요.')
+        k = st.number_input('숫자 입력', min_value=2, max_value=max_k)
+        st.subheader('')
 
-        best = []
-        opt_wcss = 0
-        for a in range(2, len(wcss) - 1) :
-            new_delta = (wcss[a - 2] - wcss[a]) / (wcss[a - 1] - wcss[a + 1])
-            if new_delta >= 2 :
-                opt_wcss = a
-                best.append(opt_wcss)
-        k = max(best)
-
-        st.text(f'{k}입니다.')
         kmeans = KMeans(n_clusters=k, random_state=4)
         df['Group'] = kmeans.fit_predict(df_new)
 
