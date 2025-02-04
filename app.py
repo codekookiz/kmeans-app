@@ -13,28 +13,19 @@ def fontRegistered():
         fm.fontManager.addfont(font_file)
     fm._load_fontmanager(try_read_cache=False)
 
-def set_font():
-    plt.rcParams['axes.unicode_minus'] = False
-    system_os = platform.system()
-    
-    if system_os == "Darwin":  # macOS
-        font_path = "/System/Library/Fonts/Supplemental/AppleGothic.ttf"
-    elif system_os == "Windows":  # Windows
-        font_path = "C:/Windows/Fonts/malgun.ttf"
-    else:  # Linux
-        rc('font', family='NanumGothic')
-    
-    if os.path.exists(font_path):
-        font_name = fm.FontProperties(fname=font_path).get_name()
-        plt.rc('font', family=font_name)
-    else:
-        st.warning("폰트를 찾을 수 없습니다. 기본 폰트를 사용합니다.")
+plt.rcParams['axes.unicode_minus'] = False
+system_os = platform.system()
+if system_os == "Darwin":  # macOS
+    font_path = "/System/Library/Fonts/Supplemental/AppleGothic.ttf"
+elif system_os == "Windows":  # Windows
+    font_path = "C:/Windows/Fonts/malgun.ttf"
+else:  # Linux
+    rc('font', family='NanumGothic')
 
 
 def main() :
     fontRegistered()
     plt.rc('font', family='NanumGothic')
-    set_font()
 
     st.title('K-Means 클러스터링 앱')
     st.subheader('')
