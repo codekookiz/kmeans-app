@@ -43,7 +43,7 @@ def main():
         st.subheader('📊 데이터 미리보기')
         st.dataframe(df.head())
         
-        st.warning('NaN 데이터가 존재할 경우 해당 행을 삭제합니다.')
+        st.warning('⚠️ NaN 데이터가 존재할 경우 해당 행을 삭제합니다.')
         st.dataframe(df.isna().sum())
         df.dropna(inplace=True)
         df.reset_index(drop=True, inplace=True)
@@ -68,9 +68,6 @@ def main():
                     df_new[col] = encoder.fit_transform(df[col])
             else:
                 st.error(f'🚨 {col} 컬럼은 클러스터링에서 제외됩니다.')
-                
-        scaler = StandardScaler()
-        df_new = pd.DataFrame(scaler.fit_transform(df_new), columns=df_new.columns)
         
         st.subheader('📌 클러스터링을 위한 데이터')
         st.dataframe(df_new)
@@ -93,30 +90,61 @@ def main():
         st.pyplot(fig1)
         
         # 최적의 K 결정
-        if max_k == 3:
-            k = 2 if (wcss[0] - wcss[1]) / (wcss[1] - wcss[2]) >= 2 else (3 if wcss[0] / min(wcss) >= 2 else 1)
-        elif max_k == 2:
-            k = 2 if (wcss[0] - wcss[1]) / wcss[1] >= 1 else 1
+        if max_k == 3 :
+            if (wcss[0] - wcss[1]) / (wcss[1] - wcss[2]) >= 2 :
+                k = 2
+            else : 
+                if wcss[0] / min(wcss) >= 2 :
+                    k = 3
+                else :
+                    k = 1
+        elif max_k == 2 :
+            if (wcss[0] - wcss[1]) / wcss[1] >= 1 :
+                k = 2 
+            else :
+                k = 1
         else:
-            best = [a for a in range(2, max_k - 1) if (wcss[a - 1] - wcss[a + 1]) != 0 and (wcss[a - 2] - wcss[a]) / (wcss[a - 1] - wcss[a + 1]) >= 2]
-            k = max(best) if best else max_k
+            best = []
+            cnt = 0
+            for a in range(2, max_k - 1) :
+                if wcss[a - 1] - wcss[a + 1] != 0 :
+                    new_delta = (wcss[a - 2] - wcss[a]) / (wcss[a - 1] - wcss[a + 1])
+                    if new_delta >= 2 :
+                        best.append(a)
+                else :
+                    if cnt == 0 :
+                        best.append(a)
+                        cnt += 1
+                    else :
+                        continue
+            if len(best) != 0 :
+                k = max(best)
+            else : 
+                k = max_k
         
         st.subheader(f'🎯 최적의 클러스터 개수: {k}개')
         
-        kmeans = KMeans(n_clusters=k, random_state=4, n_init=10)
+        kmeans = KMeans(n_clusters=k, random_state=4)
         df['Group'] = kmeans.fit_predict(df_new)
         st.success('✅ 그룹 정보가 저장되었습니다.')
         st.dataframe(df)
         
         st.subheader('🎨 클러스터 시각화')
-        st.info('앞서 선택한 컬럼 중 앞 두 개 컬럼을 이용해 스캐터플롯 차트를 생성합니다.')
-        fig2 = plt.figure()
-        palette = sb.color_palette("tab10", k)
-        sb.scatterplot(x=df_new.iloc[:, 0], y=df_new.iloc[:, 1], hue=df['Group'], palette=palette, legend='full')
-        plt.xlabel(selected_columns[0])
-        plt.ylabel(selected_columns[1] if len(selected_columns) > 1 else 'Feature 2')
-        plt.title('클러스터링 결과')
-        st.pyplot(fig2)
+        st.info('앞서 선택한 컬럼 중 가장 앞에 위치한 두 개 컬럼을 이용해 스캐터플롯 차트를 생성합니다.')
+        if len(selected_columns) >= 2 :
+            fig2 = plt.figure()
+            palette = sb.color_palette("tab10", k)
+            sb.scatterplot(x=df_new.iloc[:, 0], y=df_new.iloc[:, 1], hue=df['Group'], palette=palette, legend='full')
+            plt.xlabel(selected_columns[0])
+            if len(selected_columns) > 1 :
+                y = selected_columns[1]
+            else :
+                y = 'Feature 2'
+            plt.ylabel(y)
+            plt.title('클러스터링 결과')
+            st.pyplot(fig2)
+        else :
+            st.warning('⚠️ 위에서 두 개 이상의 컬럼을 선택해주세요.')
 
 if __name__ == '__main__':
     main()
