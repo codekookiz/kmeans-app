@@ -109,6 +109,7 @@ def main():
         st.dataframe(df)
         
         st.subheader('🎨 클러스터 시각화')
+        st.info('앞서 선택한 컬럼 중 앞 두 개 컬럼을 이용해 스캐터플롯 차트를 생성합니다.')
         fig2 = plt.figure()
         palette = sb.color_palette("tab10", k)
         sb.scatterplot(x=df_new.iloc[:, 0], y=df_new.iloc[:, 1], hue=df['Group'], palette=palette, legend='full')
