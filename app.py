@@ -17,9 +17,23 @@ plt.rcParams['axes.unicode_minus'] = False
 if platform.system() == 'Linux':
     rc('font', family='NanumGothic')
 
-font_path = "/System/Library/Fonts/Supplemental/AppleGothic.ttf"
-font_name = fm.FontProperties(fname = font_path).get_name()
-plt.rc('font', family = font_name)
+def set_font():
+    system_os = platform.system()
+    
+    if system_os == "Darwin":  # macOS
+        font_path = "/System/Library/Fonts/Supplemental/AppleGothic.ttf"
+    elif system_os == "Windows":  # Windows
+        font_path = "C:/Windows/Fonts/malgun.ttf"
+    else:  # Linux
+        font_path = "/usr/share/fonts/truetype/nanum/NanumGothic.ttf"
+    
+    if os.path.exists(font_path):
+        font_name = fm.FontProperties(fname=font_path).get_name()
+        plt.rc('font', family=font_name)
+    else:
+        st.warning("폰트를 찾을 수 없습니다. 기본 폰트를 사용합니다.")
+
+set_font()
 
 
 def main() :
