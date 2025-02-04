@@ -132,7 +132,7 @@ def main() :
             else : 
                 k = max_k
 
-        st.text(f'최적의 클러스터(그룹) 개수는 {k}입니다.')
+        st.text(f'최적의 클러스터(그룹) 개수는 {k}개입니다.')
         kmeans = KMeans(n_clusters=k, random_state=4)
         df['Group'] = kmeans.fit_predict(df_new)
 
