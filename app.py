@@ -101,6 +101,7 @@ def main() :
         st.subheader('')
 
         
+        
 
         kmeans = KMeans(n_clusters=k, random_state=4)
         df['Group'] = kmeans.fit_predict(df_new)
