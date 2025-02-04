@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
 import platform
 import os
-import seaborn as sns
+import seaborn as sb
 from pandas.api.types import is_integer_dtype, is_float_dtype, is_object_dtype
 from sklearn.preprocessing import OneHotEncoder, LabelEncoder, StandardScaler
 from sklearn.compose import ColumnTransformer
